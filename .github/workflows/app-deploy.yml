@@ -26,12 +26,12 @@ jobs:
         run: |
           docker buildx build --push --tag obiorbitalstar/timer:latest .
 
-      - name: Set up Kubernetes
-        uses: azure/setup-kubectl@v1
-        with:
-          version: v1.20.0
+      # - name: Set up Kubernetes
+      #   uses: azure/setup-kubectl@v1
+      #   with:
+      #     version: v1.20.0
 
-      - name: Deploy to Kubernetes
-        run: |
-          kubectl apply -f k8s/deployment.yaml
-          kubectl apply -f k8s/service.yaml
+      # - name: Deploy to Kubernetes
+      #   run: |
+      #     kubectl apply -f k8s/deployment.yaml
+      #     kubectl apply -f k8s/service.yaml
