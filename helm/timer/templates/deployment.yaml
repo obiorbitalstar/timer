@@ -2,11 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: timer
-  namespace: timer-prod-env
+  namespace: {{ .Values.namespace }}
   labels:
     app: timer
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: timer
@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: timer
-        image: obiorbitalstar/timer
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         ports:
-        - containerPort: 3000
+        - containerPort: {{ .Values.containerPort }}

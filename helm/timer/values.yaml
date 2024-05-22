@@ -1,0 +1,14 @@
+replicaCount: 1
+
+image:
+  repository: us-central1-docker.pkg.dev/<PROJECT_ID>/timer/timer
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 80
+
+containerPort: 3000
+
+namespace: timer-prod-env
