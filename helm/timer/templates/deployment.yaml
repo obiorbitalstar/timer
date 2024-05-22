@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
-        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        image: us-central1-docker.pkg.dev/{{ .Values.projectID }}/timer/timer:{{ .Values.image.tag }}
         ports:
         - containerPort: {{ .Values.containerPort }}
