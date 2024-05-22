@@ -98,11 +98,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Download GCP Service Account Key
-        uses: actions/download-artifact@v2
-        with:
-          name: gcp-key
-
       - name: Create namespace if not exists
         run: |
           kubectl get namespace timer-prod-env || kubectl create namespace timer-prod-env
