@@ -12,3 +12,4 @@ service:
 containerPort: 3000
 
 namespace: timer-prod-env
+projectID: ""
