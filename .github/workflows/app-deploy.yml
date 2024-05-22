@@ -108,7 +108,7 @@ jobs:
           gcloud container clusters get-credentials production --region us-central1 --project=${{ secrets.GCP_PROJECT_ID }}
 
       - name: Verify kubectl configuration
-        run: kubectl version --short
+        run: kubectl cluster-info
 
       - name: Create namespace if not exists
         run: |
