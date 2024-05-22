@@ -20,6 +20,11 @@ jobs:
       - name: Decode GCP Service Account Key
         run: echo "${{ secrets.GCP_SA_KEY_BASE64 }}" | base64 --decode > $HOME/gcp-key.json
 
+      - name: Print decoded GCP Service Account Key
+        run: |
+          echo "Decoded GCP Service Account Key:"
+          cat $HOME/gcp-key.json | sed 's/[a-zA-Z0-9]/*/g'  # Masking the key for security
+
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
         with:
@@ -44,6 +49,11 @@ jobs:
 
       - name: Decode GCP Service Account Key
         run: echo "${{ secrets.GCP_SA_KEY_BASE64 }}" | base64 --decode > $HOME/gcp-key.json
+
+      - name: Print decoded GCP Service Account Key
+        run: |
+          echo "Decoded GCP Service Account Key:"
+          cat $HOME/gcp-key.json | sed 's/[a-zA-Z0-9]/*/g'  # Masking the key for security
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
