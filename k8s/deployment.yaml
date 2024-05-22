@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: timer
+  namespace: timer-prod-env
+  labels:
+    app: timer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: timer
+  template:
+    metadata:
+      labels:
+        app: timer
+    spec:
+      containers:
+      - name: timer
+        image: obiorbitalstar/timer
+        ports:
+        - containerPort: 3000
