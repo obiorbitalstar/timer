@@ -5,6 +5,7 @@ metadata:
   namespace: {{ .Values.namespace }}
 spec:
   type: LoadBalancer
+  # type: ClusterIP 
   selector:
     app: {{ .Chart.Name }}
   ports:

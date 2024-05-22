@@ -3,7 +3,9 @@ name: Deploy Application
 on:
   push:
     branches:
-      - main
+      # - main
+      - none
+      
 
 jobs:
   build-and-deploy:
