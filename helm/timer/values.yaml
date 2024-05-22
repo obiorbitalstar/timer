@@ -22,4 +22,4 @@ ingress:
     - paths:
         - path: /
           pathType: ImplementationSpecific
-  tls: []
+
