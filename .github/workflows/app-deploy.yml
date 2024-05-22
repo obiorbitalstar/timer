@@ -78,6 +78,11 @@ jobs:
           export USE_GKE_GCLOUD_AUTH_PLUGIN=True
           echo 'export USE_GKE_GCLOUD_AUTH_PLUGIN=True' >> $GITHUB_ENV
 
+      - name: Install gcloud components
+        run: |
+          sudo apt-get install -y google-cloud-sdk
+          gcloud components install gke-gcloud-auth-plugin
+
       - name: Verify gke-gcloud-auth-plugin installation
         run: |
           if ! command -v gke-gcloud-auth-plugin &> /dev/null; then
