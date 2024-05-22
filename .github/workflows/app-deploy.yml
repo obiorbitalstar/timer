@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Deploy Application
 
 on:
   push:
@@ -6,8 +6,7 @@ on:
       - main
 
 jobs:
-  build-docker-image:
-    name: Build Docker Image
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,51 +16,44 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Print base64 encoded GCP Service Account Key
-        run: echo "${{ secrets.GCP_SA_KEY_BASE64 }}"
-
       - name: Decode GCP Service Account Key
-        run: echo "${{ secrets.GCP_SA_KEY_BASE64 }}" | base64 --decode > $HOME/gcp-key.json
-
-      - name: Print decoded GCP Service Account Key
         run: |
-          echo "Decoded GCP Service Account Key:"
-          cat $HOME/gcp-key.json  # Print the key for debugging (remove in production)
+          echo "${{ secrets.GCP_SA_KEY_BASE64 }}" | base64 --decode > $HOME/gcp-key.json
 
       - name: Authenticate to Google Cloud
+        id: auth
         uses: google-github-actions/auth@v1
         with:
           credentials_json: $HOME/gcp-key.json
 
       - name: Configure Docker to use gcloud as a credential helper
-        run: gcloud auth configure-docker us-central1-docker.pkg.dev
+        run: |
+          gcloud auth configure-docker us-central1-docker.pkg.dev
 
       - name: Build and push Docker image
         env:
           GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-        run: docker buildx build --push --tag us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/timer/timer:latest .
-
-  deploy-to-kubernetes:
-    name: Deploy to Kubernetes
-    runs-on: ubuntu-latest
-    needs: build-docker-image
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Decode GCP Service Account Key
-        run: echo "${{ secrets.GCP_SA_KEY_BASE64 }}" | base64 --decode > $HOME/gcp-key.json
-
-      - name: Print decoded GCP Service Account Key
         run: |
-          echo "Decoded GCP Service Account Key:"
-          cat $HOME/gcp-key.json  # Print the key for debugging (remove in production)
+          docker buildx build --push --tag us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/timer/timer:latest .
 
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v1
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v1
         with:
-          credentials_json: $HOME/gcp-key.json
+          version: 'latest'
+
+      - name: Add Google Cloud SDK repository
+        run: |
+          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+          sudo apt-get install -y apt-transport-https ca-certificates gnupg
+          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+          sudo apt-get update
+
+      - name: Install gke-gcloud-auth-plugin
+        run: sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
       - name: Configure kubectl
         run: |
@@ -71,8 +63,6 @@ jobs:
           gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
           gcloud container clusters get-credentials production --region us-central1 --project=${{ secrets.GCP_PROJECT_ID }}
 
-      - name: Install Helm
-        run: curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-
       - name: Deploy with Helm
-        run: helm upgrade --install timer helm/timer --namespace timer-prod-env
+        run: |
+          helm upgrade --install timer helm/timer --namespace timer-prod-env
