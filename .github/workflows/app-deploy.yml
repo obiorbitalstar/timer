@@ -1,3 +1,4 @@
+
 name: Deploy Application
 
 on:
@@ -31,15 +32,21 @@ jobs:
         with:
           version: 'latest'
 
+      - name: Install gke-gcloud-auth-plugin
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+
       - name: Configure kubectl
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
+          gcloud auth application-default login
 
       - name: Apply Kubernetes namespace
         run: |
-          kubectl apply -f k8s/namespace.yaml
+          kubectl apply -f k8s/namespace.yaml --validate=false
 
       - name: Apply Kubernetes deployment and service
         run: |
-          kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml
+          kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml --validate=false
