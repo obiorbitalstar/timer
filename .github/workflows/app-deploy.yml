@@ -46,7 +46,6 @@ jobs:
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
           echo "${{ secrets.GCP_SA_KEY_BASE64 }}" | base64 --decode > /tmp/credentials.json
-          cat /tmp/credentials.json  # Add this line to debug the content of the file
           gcloud auth activate-service-account --key-file=/tmp/credentials.json
           gcloud container clusters get-credentials production --region us-central1 --project ${{ secrets.GCP_PROJECT_ID }}
 
@@ -57,5 +56,3 @@ jobs:
       - name: Apply Kubernetes deployment and service
         run: |
           kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml --validate=false
-
-          
