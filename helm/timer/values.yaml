@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: us-central1-docker.pkg.dev/<PROJECT_ID>/timer/timer
+  repository: us-central1-docker.pkg.dev/encoded-road-424021-b8/timer/timer
   pullPolicy: IfNotPresent
   tag: "latest"
 
