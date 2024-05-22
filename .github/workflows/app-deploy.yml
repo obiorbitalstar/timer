@@ -24,7 +24,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker buildx build --push --tag obiorbitalstar/timer .
+          docker buildx build --push --tag your-docker-hub-username/timer:latest .
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v1
@@ -33,6 +33,7 @@ jobs:
 
       - name: Configure kubectl
         run: |
+          mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
 
       - name: Apply Kubernetes namespace
