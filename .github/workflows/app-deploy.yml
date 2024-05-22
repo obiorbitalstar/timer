@@ -21,7 +21,6 @@ jobs:
           echo "${{ secrets.GCP_SA_KEY_BASE64 }}" | base64 --decode > $HOME/gcp-key.json
 
       - name: Authenticate to Google Cloud
-        id: auth
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY_BASE64 }}
@@ -46,7 +45,7 @@ jobs:
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
-          tar -cvzf kubeconfig.tar.gz $HOME/.kube/config
+          tar -czf kubeconfig.tar.gz -C $HOME/.kube config
 
       - name: Upload Kubeconfig
         uses: actions/upload-artifact@v2
@@ -96,7 +95,10 @@ jobs:
           gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
           gcloud container clusters get-credentials production --region us-central1 --project=${{ secrets.GCP_PROJECT_ID }}
 
-     
+      - name: Create namespace if not exists
+        run: |
+          kubectl get namespace timer-prod-env || kubectl create namespace timer-prod-env
+
       - name: Deploy with Helm
         run: |
           helm upgrade --install timer helm/timer --namespace timer-prod-env
