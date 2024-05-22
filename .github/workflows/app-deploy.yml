@@ -80,6 +80,8 @@ jobs:
           if ! command -v gke-gcloud-auth-plugin &> /dev/null; then
             echo "gke-gcloud-auth-plugin could not be found"
             exit 1
+          else
+            echo "gke-gcloud-auth-plugin found"
           fi
 
   deploy-application:
@@ -106,6 +108,8 @@ jobs:
           gcloud auth activate-service-account --key-file=$HOME/gcp-key.json
           gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
           gcloud container clusters get-credentials production --region us-central1 --project=${{ secrets.GCP_PROJECT_ID }}
+          echo "Verifying kubectl configuration..."
+          kubectl version
 
       - name: Verify kubectl configuration
         run: kubectl cluster-info
