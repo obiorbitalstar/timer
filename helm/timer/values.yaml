@@ -8,7 +8,7 @@ image:
 service:
   type: LoadBalancer
   port: 80
-  nodePort: null  # Remove nodePort for LoadBalancer
+  nodePort: null 
 
 containerPort: 3000
 
@@ -19,7 +19,7 @@ ingress:
   enabled: true
   annotations:
     kubernetes.io/ingress.class: "nginx"
-  host: "*"
+  host: ""  
   path: /
   pathType: ImplementationSpecific
   tls: []
