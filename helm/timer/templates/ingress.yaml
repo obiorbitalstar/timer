@@ -10,17 +10,16 @@ metadata:
     {{- end }}
 spec:
   rules:
-    - http:
+    - host: {{ .Values.ingress.host }}
+      http:
         paths:
-        {{- range .Values.ingress.hosts[0].paths }}
-        - path: {{ .path }}
-          pathType: {{ .pathType }}
+        - path: {{ .Values.ingress.path }}
+          pathType: {{ .Values.ingress.pathType }}
           backend:
             service:
-              name: {{ $.Release.Name }}
+              name: {{ .Release.Name }}
               port:
-                number: {{ $.Values.service.port }}
-        {{- end }}
+                number: {{ .Values.service.port }}
 {{- if .Values.ingress.tls }}
   tls:
   {{- range .Values.ingress.tls }}
