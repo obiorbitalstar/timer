@@ -20,8 +20,7 @@ ingress:
   annotations:
     kubernetes.io/ingress.class: "nginx"
   hosts:
-    - host: example.com
-      paths:
+    - paths:
         - path: /
           pathType: ImplementationSpecific
   tls: []

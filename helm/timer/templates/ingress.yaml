@@ -10,11 +10,9 @@ metadata:
     {{- end }}
 spec:
   rules:
-  {{- range .Values.ingress.hosts }}
-  - host: {{ .host }}
-    http:
+  - http:
       paths:
-      {{- range .paths }}
+      {{- range .Values.ingress.hosts[0].paths }}
       - path: {{ .path }}
         pathType: {{ .pathType }}
         backend:
@@ -23,7 +21,6 @@ spec:
             port:
               number: {{ $.Values.service.port }}
       {{- end }}
-  {{- end }}
 {{- if .Values.ingress.tls }}
   tls:
   {{- range .Values.ingress.tls }}
