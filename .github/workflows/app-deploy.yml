@@ -66,4 +66,4 @@ jobs:
       
       - name: Deploy with Helm
         run: |
-            helm upgrade --install timer helm/timer --namespace timer-prod-env --set projectID=${{ secrets.GCP_PROJECT_ID }}
+            helm upgrade --install timer helm/timer --namespace timer-prod-env --create-namespace --set projectID=${{ secrets.GCP_PROJECT_ID }}
