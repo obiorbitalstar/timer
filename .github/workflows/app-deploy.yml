@@ -89,9 +89,7 @@ jobs:
           gcloud container clusters get-credentials production --region us-central1 --project=${{ secrets.GCP_PROJECT_ID }}
           echo "Verifying kubectl configuration..."
           kubectl version --client
-
-      - name: Verify kubectl configuration
-        run: kubectl cluster-info
+          kubectl cluster-info
 
   deploy-application:
     runs-on: ubuntu-latest
