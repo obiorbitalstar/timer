@@ -41,18 +41,17 @@ jobs:
         with:
           name: gcp-key
           path: $HOME/gcp-key.json
-          
-      - name: Upload Kubeconfig
+
+      - name: Create and upload Kubeconfig
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
           tar -cvzf kubeconfig.tar.gz $HOME/.kube/config
-          uses: actions/upload-artifact@v2
-          with:
-            name: kubeconfig
-            path: kubeconfig.tar.gz
+        uses: actions/upload-artifact@v2
+        with:
+          name: kubeconfig
+          path: kubeconfig.tar.gz
 
-### 2. Deploy Application Job
   deploy-application:
     runs-on: ubuntu-latest
     needs: build-docker-image
@@ -95,9 +94,13 @@ jobs:
           gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
           gcloud container clusters get-credentials production --region us-central1 --project=${{ secrets.GCP_PROJECT_ID }}
 
+      - name: Create namespace if not exists
+        run: |
+          kubectl get namespace timer-prod-env || kubectl create namespace timer-prod-env
+
       - name: Deploy with Helm
         run: |
-          helm upgrade --install timer helm/timer --namespace timer-prod-env --create-namespace
+          helm upgrade --install timer helm/timer --namespace timer-prod-env
 
       - name: Verify deployment
         run: kubectl get all -n timer-prod-env
