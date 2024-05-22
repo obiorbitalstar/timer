@@ -76,13 +76,18 @@ jobs:
       - name: Get LoadBalancer IP
         id: get_ip
         run: |
-          kubectl get svc -n timer-prod-env timer -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+          echo "::set-output name=loadBalancer_ip::$(kubectl get svc -n timer-prod-env timer -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
 
       - name: Health Check
         run: |
           echo "Waiting for the application to be ready..."
           for i in {1..30}; do
-            curl -s --head http://$(echo ${{ steps.get_ip.outputs.loadBalancer_ip }}):80 | head -n 1 | grep "200 OK" && break
+            response=$(curl -s --head http://${{ steps.get_ip.outputs.loadBalancer_ip }}:80 | head -n 1 | grep "200 OK")
+            if [[ ! -z "$response" ]]; then
+              echo "Application is up and running!"
+              break
+            fi
+            echo "Waiting for the application to be ready..."
             sleep 10
           done
-          curl -s http://$(echo ${{ steps.get_ip.outputs.loadBalancer_ip }}):80
+          curl -s http://${{ steps.get_ip.outputs.loadBalancer_ip }}:80
