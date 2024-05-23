@@ -66,8 +66,10 @@ The application is deployed on a GKE cluster using Helm. The deployment configur
 
 3. Add the application Helm repository:
     ```bash
-    helm repo add timer-app <repository-url>
-    helm repo update
+    helm package helm/timer
+
+    helm install timer ./timer-0.1.0.tgz --namespace timer-prod-env --create-namespace --set projectID=<your-gcp-project-id>
+
     ```
 
 4. Deploy the application:
