@@ -67,14 +67,14 @@ The application is deployed on a GKE cluster using Helm. The deployment configur
 3. Add the application Helm repository:
     ```bash
     helm package helm/timer
-
-    helm install timer ./timer-0.1.0.tgz --namespace timer-prod-env --create-namespace --set projectID=<your-gcp-project-id>
-
     ```
 
-4. Deploy the application:
+4. Install the Helm chart:
+
+
     ```bash
-    helm upgrade --install timer helm/timer --namespace timer-prod-env --set projectID=<your-gcp-project-id>
+    helm install timer ./timer-0.1.0.tgz --namespace timer-prod-env --create-namespace --set projectID=<your-gcp-project-id>
+
     ```
 
 5. Get the external IP of the LoadBalancer:
